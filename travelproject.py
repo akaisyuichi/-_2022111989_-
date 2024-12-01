@@ -698,32 +698,12 @@ def trip_logs():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Database Connection Function
 def connect_to_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="goro562544!",
+        password="비빌번호 가림",
         database="travelproject"
     )
 
