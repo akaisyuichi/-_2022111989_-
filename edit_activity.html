@@ -7,21 +7,56 @@
 </head>
 <body>
     <h1>일정 수정</h1>
-    <form method="POST" action="">
-        <label for="name">장소 이름:</label>
-        <input type="text" id="name" name="name" value="{{ activity['Name'] }}" disabled><br>
+
+    <!-- 여행 계획 정보 -->
+    <h2>여행 계획 정보</h2>
+    <p><strong>여행 이름:</strong> {{ activity_info['TripName'] }}</p>
+    <p><strong>여행지:</strong> {{ activity_info['Destination'] }}</p>
+    <p><strong>여행 날짜:</strong> {{ activity_info['StartDate'] }} ~ {{ activity_info['EndDate'] }}</p>
+
+    <!-- 오류 메시지 표시 -->
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    <!-- 현재 추가된 일정 -->
+    <h2>현재 추가된 일정</h2>
+    <table border="1">
+        <tr>
+            <th>장소 이름</th>
+            <th>방문 날짜</th>
+            <th>시작 시간</th>
+            <th>종료 시간</th>
+        </tr>
+        {% for activity in activities %}
+        <tr>
+            <td>{{ activity['Name'] }}</td>
+            <td>{{ activity['VisitDate'] }}</td>
+            <td>{{ activity['StartTime'] }}</td>
+            <td>{{ activity['EndTime'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- 일정 수정 폼 -->
+    <h2>일정 수정</h2>
+    <form method="POST" action="{{ url_for('edit_activity', activity_id=activity_info['ActivityID']) }}">
+        <label for="place_name">장소 이름:</label>
+        <input type="text" name="place_name" id="place_name" value="{{ activity_info['Name'] }}" readonly><br>
 
         <label for="visit_date">방문 날짜:</label>
-        <input type="date" id="visit_date" name="visit_date" value="{{ activity['VisitDate'] }}" disabled><br>
+        <input type="date" name="visit_date" id="visit_date" value="{{ activity_info['VisitDate'] }}" required><br>
 
         <label for="start_time">시작 시간:</label>
-        <input type="time" id="start_time" name="start_time" value="{{ activity['StartTime'] }}"><br>
+        <input type="time" name="start_time" id="start_time" value="{{ activity_info['StartTime'] }}" required><br>
 
         <label for="end_time">종료 시간:</label>
-        <input type="time" id="end_time" name="end_time" value="{{ activity['EndTime'] }}"><br>
+        <input type="time" name="end_time" id="end_time" value="{{ activity_info['EndTime'] }}" required><br>
 
         <button type="submit">저장</button>
     </form>
-    <a href="{{ url_for('edit_trip_menu', trip_id=activity['TripID']) }}">뒤로가기</a>
+
+    <!-- 뒤로가기 -->
+    <a href="{{ url_for('edit_trip_menu', trip_id=activity_info['TripID']) }}">뒤로가기</a>
 </body>
 </html>
