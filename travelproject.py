@@ -461,70 +461,81 @@ def edit_activity(activity_id):
     connection = connect_to_db()
     cursor = connection.cursor(dictionary=True)
 
+    # 기존 일정 및 여행 계획 정보 가져오기
+    query_activity = """
+        SELECT A.ActivityID, A.Name, A.VisitDate, A.StartTime, A.EndTime,
+               T.TripName, T.Destination, T.StartDate, T.EndDate, T.TripID
+        FROM Activities A
+        JOIN Trips T ON A.TripID = T.TripID
+        WHERE A.ActivityID = %s AND T.UserID = %s
+    """
+    cursor.execute(query_activity, (activity_id, session['user_id']))
+    activity_info = cursor.fetchone()
+
+    if not activity_info:
+        cursor.close()
+        connection.close()
+        return "해당 일정이 존재하지 않습니다.", 404
+
+    error_message = None
+
     if request.method == 'POST':
-        # POST 요청: 수정된 일정 정보 저장
+        # 수정된 정보 받아오기
+        new_visit_date = request.form['visit_date']
         new_start_time = request.form['start_time']
         new_end_time = request.form['end_time']
 
-        # 기존 일정 가져오기
-        query_activity = """
-            SELECT TripID, VisitDate FROM Activities 
-            WHERE ActivityID = %s
-        """
-        cursor.execute(query_activity, (activity_id,))
-        activity = cursor.fetchone()
-
-        if not activity:
-            cursor.close()
-            connection.close()
-            return "해당 일정이 존재하지 않습니다.", 404
-
-        trip_id = activity['TripID']
-        visit_date = activity['VisitDate']
-
         # 시간 겹침 확인
         query_overlap = """
-            SELECT COUNT(*) AS overlap_count FROM Activities 
-            WHERE TripID = %s AND VisitDate = %s 
-            AND ActivityID != %s 
+            SELECT COUNT(*) AS overlap_count 
+            FROM Activities 
+            WHERE TripID = %s 
+            AND VisitDate = %s 
+            AND ActivityID != %s
             AND NOT (EndTime <= %s OR StartTime >= %s)
         """
-        cursor.execute(query_overlap, (trip_id, visit_date, activity_id, new_start_time, new_end_time))
+        cursor.execute(
+            query_overlap, 
+            (activity_info['TripID'], new_visit_date, activity_id, new_start_time, new_end_time)
+        )
         overlap_count = cursor.fetchone()['overlap_count']
 
         if overlap_count > 0:
+            error_message = "수정된 시간이 다른 일정과 겹칩니다. 다시 입력해주세요."
+        else:
+            # 오류가 없으면 일정 업데이트
+            query_update = """
+                UPDATE Activities
+                SET VisitDate = %s, StartTime = %s, EndTime = %s
+                WHERE ActivityID = %s
+            """
+            cursor.execute(query_update, (new_visit_date, new_start_time, new_end_time, activity_id))
+            connection.commit()
             cursor.close()
             connection.close()
-            return "수정된 시간이 다른 일정과 겹칩니다. 다시 입력해주세요.", 400
+            return redirect(url_for('edit_trip_menu', trip_id=activity_info['TripID']))
 
-        # 일정 수정
-        query_update = """
-            UPDATE Activities 
-            SET StartTime = %s, EndTime = %s 
-            WHERE ActivityID = %s
-        """
-        cursor.execute(query_update, (new_start_time, new_end_time, activity_id))
-        connection.commit()
-
-        cursor.close()
-        connection.close()
-        return redirect(url_for('edit_trip_menu', trip_id=trip_id))
-
-    # GET 요청: 현재 일정 정보 가져오기
-    query_activity = """
-        SELECT Name, VisitDate, StartTime, EndTime, TripID FROM Activities 
-        WHERE ActivityID = %s
+    # 현재 여행 계획의 모든 일정 가져오기
+    query_activities = """
+        SELECT Name, VisitDate, 
+               DATE_FORMAT(StartTime, '%H:%i') AS StartTime, 
+               DATE_FORMAT(EndTime, '%H:%i') AS EndTime 
+        FROM Activities 
+        WHERE TripID = %s
+        ORDER BY VisitDate, StartTime
     """
-    cursor.execute(query_activity, (activity_id,))
-    activity = cursor.fetchone()
+    cursor.execute(query_activities, (activity_info['TripID'],))
+    activities = cursor.fetchall()
 
     cursor.close()
     connection.close()
 
-    if not activity:
-        return "해당 일정이 존재하지 않습니다.", 404
-
-    return render_template('edit_activity.html', activity=activity)
+    return render_template(
+        'edit_activity.html',
+        activity_info=activity_info,
+        activities=activities,
+        error_message=error_message
+    )
 
 @app.route('/delete_trip/<int:trip_id>', methods=['GET', 'POST'])
 def delete_trip(trip_id):
