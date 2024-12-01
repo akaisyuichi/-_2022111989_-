@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 메뉴</title>
+</head>
+<body>
+    <h1>안녕하세요, {{ user_name }}님!</h1>
+    <ul>
+        <li><a href="{{ url_for('add_trip') }}">여행 계획 추가</a></li>
+        <li><a href="{{ url_for('modify_trip') }}">여행 계획 수정</a></li>
+        <li><a href="{{ url_for('view_trips') }}">여행 계획 보기</a></li>
+        <li><a href="{{ url_for('view_logs') }}">로그 보기</a></li>
+        <li><a href="{{ url_for('logout') }}">로그아웃</a></li>
+    </ul>    
+</body>
+</html>

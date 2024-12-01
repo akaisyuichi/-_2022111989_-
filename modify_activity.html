@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일정 수정</title>
+</head>
+<body>
+    <h1>일정 수정</h1>
+    <form method="POST" action="{{ url_for('modify_activity', trip_id=trip_id) }}">
+        <h2>수정할 일정 선택</h2>
+        <table border="1">
+            <tr>
+                <th>선택</th>
+                <th>장소 이름</th>
+                <th>방문 날짜</th>
+                <th>시작 시간</th>
+                <th>종료 시간</th>
+            </tr>
+            {% for activity in activities %}
+            <tr>
+                <td><input type="radio" name="activity_id" value="{{ activity['ActivityID'] }}" required></td>
+                <td>{{ activity['Name'] }}</td>
+                <td>{{ activity['VisitDate'] }}</td>
+                <td>{{ activity['StartTime'] }}</td>
+                <td>{{ activity['EndTime'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>새로운 시간 입력</h2>
+        <label for="start_time">시작 시간:</label>
+        <input type="time" name="start_time" id="start_time" required><br>
+
+        <label for="end_time">종료 시간:</label>
+        <input type="time" name="end_time" id="end_time" required><br>
+
+        <button type="submit">저장</button>
+    </form>
+
+    <a href="{{ url_for('edit_trip_menu', trip_id=trip_id) }}">뒤로가기</a>
+</body>
+</html>

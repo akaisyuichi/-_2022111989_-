@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>활동 로그</title>
+</head>
+<body>
+    <h1>활동 로그</h1>
+    <table border="1">
+        <tr>
+            <th>로그 ID</th>
+            <th>활동 ID</th>
+            <th>변경 유형</th>
+            <th>변경 시간</th>
+            <th>변경자</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log['LogID'] }}</td>
+            <td>{{ log['ActivityID'] }}</td>
+            <td>{{ log['ChangeType'] }}</td>
+            <td>{{ log['ChangedAt'] }}</td>
+            <td>{{ log['ChangedBy'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('view_logs') }}">뒤로가기</a>
+</body>
+</html>

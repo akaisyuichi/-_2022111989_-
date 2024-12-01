@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 계획 목록</title>
+</head>
+<body>
+    <h1>여행 계획 목록</h1>
+    {% if trips %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>여행 이름</th>
+                    <th>여행지</th>
+                    <th>시작 날짜</th>
+                    <th>종료 날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trips %}
+                <tr>
+                    <td>{{ trip[1] }}</td>
+                    <td>{{ trip[2] }}</td>
+                    <td>{{ trip[3] }}</td>
+                    <td>{{ trip[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>현재 여행 계획이 없습니다.</p>
+    {% endif %}
+    <a href="/">홈으로 돌아가기</a>
+</body>
+</html>

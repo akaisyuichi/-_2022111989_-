@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ trip_info.TripName }} 상세 보기</title>
+</head>
+<body>
+    <h1>{{ trip_info.TripName }}</h1>
+    <p>기간: {{ trip_info.StartDate }} ~ {{ trip_info.EndDate }}</p>
+    <h2>일정</h2>
+    {% if activities %}
+        <ul>
+            {% for activity in activities %}
+                <li>
+                    <strong>{{ activity.Name }}</strong><br>
+                    날짜: {{ activity.VisitDate }}<br>
+                    시간: {{ activity.StartTime }} ~ {{ activity.EndTime }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>등록된 일정이 없습니다.</p>
+    {% endif %}
+    <a href="{{ url_for('view_trips') }}">뒤로가기</a>
+</body>
+</html>

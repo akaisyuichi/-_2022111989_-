@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일정 수정</title>
+</head>
+<body>
+    <h1>일정 수정</h1>
+    <form method="POST" action="">
+        <label for="name">장소 이름:</label>
+        <input type="text" id="name" name="name" value="{{ activity['Name'] }}" disabled><br>
+
+        <label for="visit_date">방문 날짜:</label>
+        <input type="date" id="visit_date" name="visit_date" value="{{ activity['VisitDate'] }}" disabled><br>
+
+        <label for="start_time">시작 시간:</label>
+        <input type="time" id="start_time" name="start_time" value="{{ activity['StartTime'] }}"><br>
+
+        <label for="end_time">종료 시간:</label>
+        <input type="time" id="end_time" name="end_time" value="{{ activity['EndTime'] }}"><br>
+
+        <button type="submit">저장</button>
+    </form>
+    <a href="{{ url_for('edit_trip_menu', trip_id=activity['TripID']) }}">뒤로가기</a>
+</body>
+</html>

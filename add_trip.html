@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 계획 추가</title>
+</head>
+<body>
+    <h1>여행 계획 추가</h1>
+
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('add_trip') }}">
+        <label for="trip_name">여행 이름:</label>
+        <input type="text" id="trip_name" name="trip_name" required><br>
+
+        <label for="destination">여행지:</label>
+        <input type="text" id="destination" name="destination" required><br>
+
+        <label for="start_date">시작 날짜:</label>
+        <input type="date" id="start_date" name="start_date" required><br>
+
+        <label for="end_date">종료 날짜:</label>
+        <input type="date" id="end_date" name="end_date" required><br>
+
+        <button type="submit">저장</button>
+    </form>
+
+    <h2>기존 여행 계획</h2>
+    <table border="1">
+        <tr>
+            <th>여행 이름</th>
+            <th>여행지</th>
+            <th>시작 날짜</th>
+            <th>종료 날짜</th>
+        </tr>
+        {% for trip in trips %}
+        <tr>
+            <td>{{ trip["TripName"] }}</td>
+            <td>{{ trip["Destination"] }}</td>
+            <td>{{ trip["StartDate"] }}</td>
+            <td>{{ trip["EndDate"] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('main_menu') }}">뒤로가기</a>
+</body>
+</html>
